@@ -42,6 +42,8 @@ public slots:
 private:
     std::vector<Item*> items;
     Database* db;
+    QString curProfession;
+    int curLow, curHigh;
 
     QMap<QString, int> getRecipeFromName(QString);
 };

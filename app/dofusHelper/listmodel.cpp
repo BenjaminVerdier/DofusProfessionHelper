@@ -50,7 +50,9 @@ QVariant listModel::data(const QModelIndex &index, int role) const
 }
 
 void listModel::updateData(const int levelLow, const int levelHigh, const QString &profession) {
-
+    curProfession = profession;
+    curLow = levelLow;
+    curHigh = levelHigh;
     if (items.size()>0)
         removeRows(0, items.size());
     items = db->fetchFromDatabase(levelLow, levelHigh, profession);
@@ -84,7 +86,7 @@ void listModel::saveResourceList(QList<QString> names, QList<int> qties) {
 
     }
     QString csv = qmapToCsv(ingredients);
-    QString filename = "ingredients.csv";
+    QString filename = curProfession + "_" + QString::number(curLow) + "_" + QString::number(curHigh) + ".csv";
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
     QTextStream outstream(&file);
