@@ -16,8 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         Database.cpp \
-        datareceiver.cpp \
-        listmodel.cpp \
+        datahandler.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
@@ -35,5 +34,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Database.h \
-    datareceiver.h \
-    listmodel.h
+    datahandler.h

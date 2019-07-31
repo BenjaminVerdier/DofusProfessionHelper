@@ -2,8 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "Database.h"
-#include "listmodel.h"
+#include "datahandler.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,8 +18,8 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
-    listModel* myModel = new listModel();
-    engine.rootContext()->setContextProperty("myModel",myModel);
+    dataHandler* dataH = new dataHandler();
+    engine.rootContext()->setContextProperty("dataH",dataH);
 
     engine.load(url);
 
