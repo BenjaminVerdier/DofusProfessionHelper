@@ -77,7 +77,7 @@ ApplicationWindow {
                 var itemNames = dataH.itemNames();
                 var itemLevels = dataH.itemLevels();
                 for (var i = 0; i < itemNames.length; ++i) {
-                    searchListView.model.append({'firstElement':itemNames[i], 'secondElement':itemLevels[i]})
+                    searchListView.model.append({'firstElement':itemNames[i], 'secondElement':itemLevels[i], 'thirdElement':0})
                 }
             }
         }
@@ -114,6 +114,7 @@ ApplicationWindow {
             height: 312
             property bool itemMode: true
 
+
             model: ListModel {}
             delegate: Item {
                 x: 5
@@ -121,7 +122,7 @@ ApplicationWindow {
                 height: 40
                 property string name: firstElement
                 property int number: secondElement
-                property int qty: 0
+                property int qty: thirdElement
                 Row {
                     id: row1
                     spacing: 10
@@ -143,10 +144,16 @@ ApplicationWindow {
                     }
                     SpinBox {
                         editable: true
-                        to: 100
+                        to: 9999
                         from: 0
-                        value: 0
+                        value: parent.parent.qty
                         onValueChanged: {
+                            for (var i = 0; i < searchListView.model.count; ++i) {
+                                if (searchListView.model.get(i).firstElement === parent.parent.name) {
+                                    searchListView.model.get(i).thirdElement = value
+                                    break
+                                }
+                            }
                             parent.parent.qty = value;
                             if (!searchListView.itemMode) {
                                 qtyToBuy.text = Math.max(0,number - value)
@@ -232,10 +239,10 @@ ApplicationWindow {
                 searchListView.itemMode = false
                 var names = [];
                 var qties = [];
-                for(var child in searchListView.contentItem.children) {
-                    if (searchListView.contentItem.children[child].qty > 0) {
-                        names.push(searchListView.contentItem.children[child].name)
-                        qties.push(searchListView.contentItem.children[child].qty)
+                for(var i = 0; i < searchListView.model.count; ++i) {
+                    if (searchListView.model.get(i).thirdElement > 0) {
+                        names.push(searchListView.model.get(i).firstElement)
+                        qties.push(searchListView.model.get(i).thirdElement)
                     }
 
                 }
