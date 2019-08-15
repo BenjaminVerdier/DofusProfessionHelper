@@ -35,10 +35,7 @@ ApplicationWindow {
 
     GridView {
         id: gridView
-        x: 0
-        y: 0
-        width: 640
-        height: 480
+        anchors.fill: parent
         cellHeight: 70
         cellWidth: 70
 
@@ -98,7 +95,7 @@ ApplicationWindow {
         Text {
             id: element1
             x: 8
-            y: 93
+            y: 102
             width: 91
             height: 28
             text: qsTr("Level Range:")
@@ -109,9 +106,11 @@ ApplicationWindow {
         ListView {
             id: searchListView
             x: 0
-            y: 168
             width: 545
-            height: 312
+            anchors.top: parent.top
+            anchors.topMargin: 168
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
             property bool itemMode: true
 
 
@@ -175,7 +174,7 @@ ApplicationWindow {
         Button {
             id: exportBtn
             x: 551
-            y: 432
+            y: 53
             width: 81
             height: 40
             text: qsTr("Export")
@@ -193,7 +192,7 @@ ApplicationWindow {
 
         SpinBox {
             id: levelLow
-            x: 77
+            x: 86
             y: 56
             width: 107
             height: 34
@@ -230,7 +229,7 @@ ApplicationWindow {
         Button {
             id: computeResourcesBtn
             x: 551
-            y: 381
+            y: 2
             width: 81
             height: 40
             text: qsTr("Resources")
@@ -259,3 +258,14 @@ ApplicationWindow {
         }
     }
 }
+
+
+
+
+
+
+
+/*##^## Designer {
+    D{i:12;anchors_height:312;anchors_y:168}D{i:6;anchors_height:480;anchors_width:640;anchors_x:0;anchors_y:0}
+}
+ ##^##*/
