@@ -7,7 +7,7 @@ import QtQuick.Dialogs.qml 1.0
 ApplicationWindow {
     id: mainWindow
     visible: true
-    width: 640
+    width: 1200
     height: 480
     title: qsTr("Dofus Helper")
 
@@ -35,6 +35,10 @@ ApplicationWindow {
 
     GridView {
         id: gridView
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
         anchors.fill: parent
         cellHeight: 70
         cellWidth: 70
@@ -70,7 +74,6 @@ ApplicationWindow {
             onPressed: {
                 dataH.updateItemData(levelLow.value, levelHigh.value, profCombo.currentText)
                 searchListView.model.clear()
-                searchListView.itemMode = true;
                 var itemNames = dataH.itemNames();
                 var itemLevels = dataH.itemLevels();
                 for (var i = 0; i < itemNames.length; ++i) {
@@ -111,7 +114,6 @@ ApplicationWindow {
             anchors.topMargin: 168
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
-            property bool itemMode: true
 
 
             model: ListModel {}
@@ -122,11 +124,6 @@ ApplicationWindow {
                 property string name: firstElement
                 property int number: secondElement
                 property int qty: thirdElement
-                Rectangle {
-                    width:mainWindow.width
-                    height:40
-                    color: (!searchListView.itemMode && parent.qty >= parent.number) ? "grey" : "white"
-                }
 
 
                 Row {
@@ -135,16 +132,16 @@ ApplicationWindow {
 
                     Text{
                         id: num
-                        width: searchListView.itemMode ? 50 : 200
-                        text: searchListView.itemMode ? parent.parent.number : parent.parent.name
+                        width: 50
+                        text: parent.parent.number
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignHCenter
                     }
 
                     Text {
                         id: nameLbl
-                        width: searchListView.itemMode ? 200 : 50
-                        text: searchListView.itemMode ? parent.parent.name : parent.parent.number
+                        width: 200
+                        text: parent.parent.name
                         font.bold: true
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignHCenter
@@ -155,25 +152,41 @@ ApplicationWindow {
                         from: 0
                         value: parent.parent.qty
                         onValueChanged: {
+
+                            var dif = value - parent.parent.qty;
+
+
                             for (var i = 0; i < searchListView.model.count; ++i) {
                                 if (searchListView.model.get(i).firstElement === parent.parent.name) {
                                     searchListView.model.get(i).thirdElement = value
                                     break
                                 }
                             }
-                            parent.parent.qty = value;
-                            if (!searchListView.itemMode) {
-                                qtyToBuy.text = Math.max(0,number - value)
-                            }
-                        }
-                    }
-                    Text {
-                        id: qtyToBuy
-                        width: 250
-                        anchors.verticalCenter: parent.verticalCenter
-                        horizontalAlignment: Text.AlignHCenter
 
-                        text: searchListView.itemMode ? "" : number
+
+                            var names = dataH.ingredientNamesForItem(parent.parent.name)
+                            var qties = dataH.ingredientQtyForItem(parent.parent.name)
+
+                            for (var j = 0; j < names.length; ++j) {
+                                var foundIt = false
+                                console.log(resourceList.model)
+                                for (var k = 0; k < resourceList.model.count; ++k) {
+                                    console.log(resourceList.model.get(k).firstElement + " and " + names[j])
+                                    if (resourceList.model.get(k).firstElement === names[j]) {
+                                        foundIt = true
+                                        resourceList.model.get(k).secondElement += dif*qties[j]
+                                        if (resourceList.model.get(k).secondElement <= 0) {
+                                            resourceList.model.remove(k,1)
+                                        }
+                                    }
+                                }
+                                if (!foundIt) {
+                                    resourceList.model.append({'firstElement':names[j], 'secondElement':dif*qties[j], 'thirdElement':0})
+                                }
+                            }
+
+
+                        }
                     }
                 }
             }
@@ -190,11 +203,7 @@ ApplicationWindow {
             focusPolicy: Qt.WheelFocus
             flat: false
             onPressed: {
-
-                var names = myModel.ingredientNames()
-                for(var child in searchListView.contentItem.children) {
-                    searchListView.model.insert({'name':names[child], 'qty':0})
-                }
+                //TODO
             }
         }
 
@@ -234,33 +243,75 @@ ApplicationWindow {
             }
         }
 
-        Button {
-            id: computeResourcesBtn
+        ListView {
+            id: resourceList
             x: 551
-            y: 2
-            width: 81
-            height: 40
-            text: qsTr("Resources")
-            onPressed: {
-                if (!searchListView.itemMode) {return}
-                searchListView.itemMode = false
-                var names = [];
-                var qties = [];
-                for(var i = 0; i < searchListView.model.count; ++i) {
-                    if (searchListView.model.get(i).thirdElement > 0) {
-                        names.push(searchListView.model.get(i).firstElement)
-                        qties.push(searchListView.model.get(i).thirdElement)
+            width: 649
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.top: parent.top
+            anchors.topMargin: 168
+            model: ListModel {}
+            delegate: Item {
+                x: 5
+                width: 80
+                height: 40
+                property string name: firstElement
+                property int number: secondElement
+                property int qty: thirdElement
+                Rectangle {
+                    width:mainWindow.width
+                    height:40
+                    color: parent.qty >= parent.number ? "grey" : "white"
+                }
+
+
+                Row {
+                    id: row2
+                    spacing: 10
+
+                    Text{
+                        id: resourceName
+                        width: 200
+                        text: parent.parent.name
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
-                }
-                console.log(names)
-                console.log(qties)
-                dataH.updateIngredientsData(names, qties);
-                searchListView.model.clear()
-                var ingredientNames = dataH.ingredientNames();
-                var ingredientQties = dataH.ingredientQties();
-                for (var i = 0; i < ingredientNames.length; ++i) {
-                    searchListView.model.append({'firstElement':ingredientNames[i], 'secondElement':ingredientQties[i]})
+                    Text {
+                        id: resourceQty
+                        width: 50
+                        text: parent.parent.number
+                        font.bold: true
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    SpinBox {
+                        editable: true
+                        to: 9999
+                        from: 0
+                        value: parent.parent.qty
+                        onValueChanged: {
+                            for (var i = 0; i < searchListView.model.count; ++i) {
+                                if (searchListView.model.get(i).firstElement === parent.parent.name) {
+                                    searchListView.model.get(i).thirdElement = value
+                                    break
+                                }
+                            }
+                            parent.parent.qty = value;
+                            if (!searchListView.itemMode) {
+                                qtyToBuy.text = Math.max(0,number - value)
+                            }
+                        }
+                    }
+                    Text {
+                        id: qtyToBuy
+                        width: 250
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignHCenter
+
+                        text: number
+                    }
                 }
             }
         }

@@ -57,3 +57,21 @@ QMap<QString, int> dataHandler::getRecipeFromName(QString name) {
     }
     return QMap<QString,int>();
 }
+
+QList<QString> dataHandler::ingredientNamesForItem(QString itemName) {
+    for (Item* item : items) {
+        if (item->name == itemName) {
+            return item->recipe.keys();
+        }
+    }
+    return QList<QString>();
+}
+
+QList<int> dataHandler::ingredientQtyForItem(QString itemName) {
+    for (Item* item : items) {
+        if (item->name == itemName) {
+            return item->recipe.values();
+        }
+    }
+    return QList<int>();
+}

@@ -22,6 +22,8 @@ public slots:
     QList<int> itemLevels();
     QList<QString> ingredientNames() {return ingredients.keys();}
     QList<int> ingredientQties() {return ingredients.values();}
+    QList<QString> ingredientNamesForItem(QString itemName);
+    QList<int> ingredientQtyForItem(QString itemName);
 
 private:
 
