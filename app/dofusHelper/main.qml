@@ -122,9 +122,17 @@ ApplicationWindow {
                 property string name: firstElement
                 property int number: secondElement
                 property int qty: thirdElement
+                Rectangle {
+                    width:mainWindow.width
+                    height:40
+                    color: (!searchListView.itemMode && parent.qty >= parent.number) ? "grey" : "white"
+                }
+
+
                 Row {
                     id: row1
                     spacing: 10
+
                     Text{
                         id: num
                         width: searchListView.itemMode ? 50 : 200
