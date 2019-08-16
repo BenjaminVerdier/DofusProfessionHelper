@@ -169,9 +169,7 @@ ApplicationWindow {
 
                             for (var j = 0; j < names.length; ++j) {
                                 var foundIt = false
-                                console.log(resourceList.model)
                                 for (var k = 0; k < resourceList.model.count; ++k) {
-                                    console.log(resourceList.model.get(k).firstElement + " and " + names[j])
                                     if (resourceList.model.get(k).firstElement === names[j]) {
                                         foundIt = true
                                         resourceList.model.get(k).secondElement += dif*qties[j]
@@ -293,15 +291,13 @@ ApplicationWindow {
                         value: parent.parent.qty
                         onValueChanged: {
                             for (var i = 0; i < searchListView.model.count; ++i) {
-                                if (searchListView.model.get(i).firstElement === parent.parent.name) {
-                                    searchListView.model.get(i).thirdElement = value
+                                if (resourceList.model.get(i).firstElement === parent.parent.name) {
+                                    resourceList.model.get(i).thirdElement = value
                                     break
                                 }
                             }
                             parent.parent.qty = value;
-                            if (!searchListView.itemMode) {
-                                qtyToBuy.text = Math.max(0,number - value)
-                            }
+                            qtyToBuy.text = Math.max(0,number - value)
                         }
                     }
                     Text {
